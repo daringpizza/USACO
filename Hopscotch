@@ -1,0 +1,80 @@
+//============================================================================
+// Name        : Hopscotch.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstdlib>
+#include <vector>
+using namespace std;
+using std::vector;
+
+/*long int fact(long int k) {
+ if (k == 0) {
+ return 1;
+ } else {
+ long int g = k * fact(k - 1);
+ cout << g << endl;
+ return g;
+ }
+ }*/
+vector<vector<string> > hopscotchMap;
+
+int count(int x, int y) {
+	if (x == static_cast<int>(hopscotchMap.size()) - 1
+			&& y == static_cast<int>(hopscotchMap[x].size()) - 1) {
+		return 1;
+	}
+
+	int ret = 0;
+	for (int i = x + 1; i < static_cast<int>(hopscotchMap.size()); i++) {
+		for (int j = y + 1; j < static_cast<int>(hopscotchMap[i].size()); j++) {
+			if (hopscotchMap[i][j] != hopscotchMap[x][y]) {
+				ret += count(i, j);
+				cout << count(i, j) << endl;
+			}
+		}
+	}
+	return ret;
+}
+
+int main() {
+	int lineCount = 0;
+	int width = 0;
+	int height = 0;
+	string delimiter = " ";
+
+	ifstream infile("input.txt");
+	string line;
+
+	while (getline(infile, line)) {
+		if (lineCount == 0) { //read the array dimensions
+			size_t pos = line.find(delimiter);
+			string token;
+			if (pos != string::npos) {
+				token = line.substr(0, pos);
+				height = atoi(token.c_str());
+				line.erase(0, pos + delimiter.length());
+			}
+			width = atoi(line.c_str());
+		} else {
+			if (lineCount == 1) {  //initialize array
+				hopscotchMap.resize(height);
+				for (int i = 0; i < height; i++) {
+					hopscotchMap[i].resize(width);
+				}
+			}
+			for (int i = 0; i < height; i++) {
+				hopscotchMap[lineCount - 1][i] = line.substr(i, 1);
+			}
+		}
+		lineCount++;
+	}
+	cout << count(0, 0) << endl;
+}
+
